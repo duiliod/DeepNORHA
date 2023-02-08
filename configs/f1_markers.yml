@@ -1,0 +1,10 @@
+Type: MetricMonitor
+name: Markers
+metric: point_f1_pr_re
+pipe:
+- Type: npFunction
+  fun: transpose
+  fun_args:
+    axes: [1,0,2,3]
+- Type: npFunction
+  fun: squeeze

@@ -1,0 +1,78 @@
+Model:
+  Type: LeNet_ELU_Autoencoder
+  patch_size: 256
+  batch_norm: True
+  activation_unit: ReLU
+  normalization: NormalizeWithOwnMeanAndStd
+  activation_function: Softmax2d
+  dropout: 0.0
+  filters: [32,64,128,256,512]
+  num_input_channels: 1
+  num_output_channels: 2
+DataModule:
+  splits: ../acandis/split.yml
+  workers: 8
+  batch_size: 16
+  Dataset:
+    Type: MultiDataset
+    len: 1600
+    datasets:
+    - pipe:
+      - Type: LoadImage
+        subfolder: img
+      - Type: Normalize
+        max: 255.0 
+    - Type: MultiDataset
+      datasets:
+      - pipe:
+        - Type: LoadImage
+          subfolder: lbl/617bf61256a334b9751774b0
+      - pipe:
+        - Type: LoadImage
+          subfolder: lbl/617bf61256a334b9751774b5
+      - pipe:
+        - Type: LoadImage
+          subfolder: lbl/617bf61256a334b9751774b1
+      - pipe:
+        - Type: LoadImage
+          subfolder: lbl/617bf61256a334b9751774b4
+      - pipe:
+        - Type: LoadImage
+          subfolder: lbl/617bf61256a334b9751774b6
+      - pipe:
+        - Type: LoadImage
+          subfolder: lbl/619cf927f682fbbfab501c2f
+      - pipe:
+        - Type: LoadImage
+          subfolder: lbl/619cf952f682fbbfab501c31
+      pipe:
+      - Type: npReduce
+        fun: logical_or
+      - Type: Dilate
+        dilation: 3
+    pipe:
+      - Type: ExtractPatch
+        patch_shape: [256,256]
+      - Type: ToTensor
+        type: [float, long]
+Train:
+  epochs: 100
+  sampling_strategy: uniform
+  scheduler: ReduceLROnPlateau
+  early_stopping: True
+  metrics_to_monitor: lines:dice,lines:precision,lines:recall,lines:auc_pr_re_curve,markers:f1_score_for_bifurcations,markers:precision_for_bifurcations,markers:recall_for_bifurcations,markers:auc_pr_re_curve_when_label_smoothing
+  evaluation_metric: lines:dice:0.0,markers:f1_score_for_bifurcations:1.0
+  evaluation_metric_mode: max
+  loss: 
+    Type: CrossEntropyLoss
+    weight: !Tensor [1.,5.]
+  optimizer:
+    Type: Adam
+    lr: 0.01
+  augmentation: True
+  apply_augmentation_on_validation: False
+  sample_for_validation: 2
+Logger: !include visdom.yml
+Monitors:
+- Type: ClassSegmentationPlot
+- Type: LossMonitor

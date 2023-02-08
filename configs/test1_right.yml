@@ -1,0 +1,34 @@
+DataModule: !include data_right.yml
+Model:
+  Type: LeNet_ELU_Autoencoder
+  batch_norm: True
+  activation_unit: ELU
+  normalization: None
+  activation_function: Sigmoid
+  activate_loss: True
+  filters: [32,64,128]
+  rep_dim: 32
+  num_input_channels: 1
+  num_output_channels: 1
+Train:
+  epochs: 500
+  scheduler: ReduceLROnPlateau
+  Loss: 
+    Type: MSELoss   
+  optimizer:
+    Type: Adam
+    lr: 0.001
+  Monitors:
+  - Type: LossMonitor
+  - Type: MetricLogger
+    metric: Loss
+  - !include plot.yml
+Logger:
+- !include visdom.yml
+Predict: !include predict_onestep.yml
+Callbacks:
+- Type: ModelCheckpoint
+  save_last: True
+  save_weights_only: True
+- Type: LearningRateMonitor
+  logging_interval: epoch

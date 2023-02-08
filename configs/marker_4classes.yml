@@ -1,0 +1,41 @@
+Type: MultiDataset
+datasets:
+- pipe:
+  - Type: LoadImage # Distal stent marker
+    subfolder: lbl/617bf61256a334b9751774b0
+- Type: MultiDataset # Pusher
+  datasets:
+  - pipe:
+    - Type: LoadImage # Proximal stent marker
+      subfolder: lbl/617bf61256a334b9751774b1
+  - pipe:
+    - Type: LoadImage # Transportwire pusher
+      subfolder: lbl/617bf61256a334b9751774b5
+  pipe:
+  - Type: npReduce
+    fun: logical_or
+- pipe: # No return
+  - Type: LoadImage # Transportwire point-of-no-return
+    subfolder: lbl/617bf61256a334b9751774b4
+- Type: MultiDataset # Catheter markers
+  datasets:
+  - pipe:
+    - Type: LoadImage # Delivery catheter marker
+      subfolder: lbl/617bf61256a334b9751774b6
+  - pipe:
+    - Type: LoadImage # Intermediate catheter marker
+      subfolder: lbl/619cf927f682fbbfab501c2f
+  - pipe:
+    - Type: LoadImage # Jailed catheter marker
+      subfolder: lbl/619cf952f682fbbfab501c31
+  pipe:
+  - Type: npReduce
+    fun: logical_or
+pipe:
+- Type: Stack
+- Type: Dilate
+  dilation: 3
+- Type: npFunction
+  fun: argmax
+  fun_args:
+    axis: 2

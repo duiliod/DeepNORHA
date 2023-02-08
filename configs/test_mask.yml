@@ -1,0 +1,66 @@
+pipe:
+- Type: UnPack # (name, (x,y),y_hat) -> (name,x,y,y_hat)
+- Type: Pack
+  struct: [1,2,3,0] # x, y, y_hat, name
+##### Parse x ####################
+- Type: ApplyOne
+  index: 0
+  pipe:
+  - Type: npFunction
+    fun: squeeze
+  - Type: ColorMap
+    cmap: gray
+##### Parse y ##############
+- Type: ApplyOne
+  index: 1
+  pipe:
+  - Type: npFunction
+    fun: squeeze
+  - Type: Threshold
+  - Type: Dilate
+    dilation: 6
+  - Type: ColorMap
+    cmap: tab10
+    add_zero: True
+##### Parse y_hat  ################
+- Type: ApplyOne
+  index: 2
+  pipe:
+  - Type: npFunction
+    fun: squeeze
+  - Type: Threshold
+  - Type: Dilate
+    dilation: 6
+  - Type: ColorMap
+    cmap: tab10
+    add_zero: True
+##### Pack ########################
+- Type: Pack
+  fields: [x, y_, y_hat, name]
+  struct: [[x, y_], [x, y_hat], name]
+##### Fig y  ######################
+- Type: ApplyOne
+  index: 0
+  pipe:
+  - Type: Overlap
+##### Fig y_hat  ##################
+- Type: ApplyOne
+  index: 1
+  pipe:
+  - Type: Overlap
+##### Pack ########################
+- Type: Pack
+  fields: [fig_y_, fig_y_hat, name]
+  struct: [[name, fig_y_], [name, fig_y_hat]]
+##### Save fig y  ######################
+- Type: ApplyOne
+  index: 0
+  pipe:
+  - Type: SaveImage
+    subfolder: y_
+##### Save fig y_hat  ##################
+- Type: ApplyOne
+  index: 1
+  pipe:
+  - Type: SaveImage
+    subfolder: y_hat

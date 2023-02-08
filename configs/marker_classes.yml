@@ -1,0 +1,31 @@
+Type: MultiDataset
+datasets:
+- pipe:
+  - Type: LoadImage
+    subfolder: lbl/617bf61256a334b9751774b0
+- pipe:
+  - Type: LoadImage
+    subfolder: lbl/617bf61256a334b9751774b5
+- pipe:
+  - Type: LoadImage
+    subfolder: lbl/617bf61256a334b9751774b1
+- pipe:
+  - Type: LoadImage
+    subfolder: lbl/617bf61256a334b9751774b4
+- pipe:
+  - Type: LoadImage
+    subfolder: lbl/617bf61256a334b9751774b6
+- pipe:
+  - Type: LoadImage
+    subfolder: lbl/619cf927f682fbbfab501c2f
+- pipe:
+  - Type: LoadImage
+    subfolder: lbl/619cf952f682fbbfab501c31
+pipe:
+- Type: Stack
+- Type: Dilate
+  dilation: 3
+- Type: npFunction
+  fun: argmax
+  fun_args:
+    axis: 2

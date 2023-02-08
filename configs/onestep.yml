@@ -1,0 +1,64 @@
+Model:
+  Type: LeNet_ELU_Autoencoder
+  patch_size: 256
+  batch_norm: True
+  activation_unit: ReLU
+  normalization: NormalizeWithOwnMeanAndStd
+  activation_function: Softmax2d
+  activate_loss: True
+  dropout: 0.0
+  filters: [32,64,128,256,512]
+  num_input_channels: 1
+  num_output_channels: 8
+DataModule:
+  splits: ../acandis/split.yml
+  workers: 8
+  batch_size: 16
+  test_batch: 1
+  Dataset:
+    Type: MultiDataset
+    len: 1600
+    datasets:
+    - pipe:
+      - Type: LoadImage
+        subfolder: img
+      - Type: Normalize
+        max: 255.0
+    - !include marker_classes.yml
+    pipe:
+      - Type: ExtractPatch
+        patch_shape: [256,256]
+      - Type: ToTensor
+        type: [float, long]
+Train:
+  epochs: 100
+  scheduler: ReduceLROnPlateau
+  Loss: 
+    Type: CrossEntropyLoss
+    weight: !Tensor [1.,5.,5.,5.,5.,5.,5.,5.]
+  optimizer:
+    Type: Adam
+    lr: 0.01
+  Monitors:
+  - Type: MultiMonitor
+    monitors:
+    - Type: LossMonitor
+    - !include f1_classes.yml
+  - Type: MetricLogger
+    metrics: 
+    - F1
+    - Pr
+    - Re
+    - Loss
+    - F1Classes
+  - !include plot_classes.yml
+Logger:
+- !include visdom.yml
+- !include filelogger.yml
+Predict: !include predict_onestep.yml
+Callbacks:
+- Type: ModelCheckpoint
+  monitor: point_f1_pr_reClasses
+  mode: max
+  save_last: True
+  save_weights_only: True

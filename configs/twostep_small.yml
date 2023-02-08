@@ -1,0 +1,98 @@
+Model:
+  Type: MultiTaskModel
+  models:
+  - Type: LeNet_ELU_Autoencoder
+    patch_size: 256
+    batch_norm: True
+    activation_unit: ReLU
+    normalization: NormalizeWithOwnMeanAndStd
+    activation_function: Sigmoid
+    dropout: 0.0
+    filters: [32,64,128,256]
+    num_input_channels: 1
+    num_output_channels: 1
+  - Type: LeNet_ELU_Autoencoder
+    patch_size: 256
+    batch_norm: True
+    activation_unit: ReLU
+    normalization: NormalizeWithOwnMeanAndStd
+    activation_function: Softmax2d
+    activate_loss: True
+    dropout: 0.0
+    filters: [32,64,128]
+    num_input_channels: 2
+    num_output_channels: 8
+  prepend_input: True
+DataModule:
+  splits: ../acandis/split.yml
+  workers: 8
+  batch_size: 16
+  test_batch: 4
+  Dataset:
+    Type: MultiDataset
+    len: 1600
+    datasets:
+    - pipe:
+      - Type: LoadImage
+        subfolder: img
+      - Type: Normalize
+        max: 255.0 
+    - !include marker_mask.yml
+    - !include marker_classes.yml
+    pipe:
+      - Type: ExtractPatch
+        patch_shape: [256,256]
+      - Type: ToTensor
+        type: [float, float, long]
+      - Type: Pack
+        fields: [img, mask, classes]
+        struct: [img, [mask, classes]]
+Train:
+  epochs: 100
+  scheduler: ReduceLROnPlateau
+  Loss: 
+    Type: MultiTaskLoss
+    losses:
+    - Type: BCEWithLogitsLoss
+      pos_weight: !Tensor [5.]
+    - Type: CrossEntropyLoss
+      weight: !Tensor [1.,5.,5.,5.,5.,5.,5.,5.]
+  optimizer:
+    Type: Adam
+    lr: 0.01
+  augmentation: True
+  apply_augmentation_on_validation: False
+  sample_for_validation: 2
+  Monitors:
+  - Type: MultiTaskMonitor
+    monitors:
+    # Monitor sum
+    - Type: LossMonitor
+    # Monitor first stage (marker detection)
+    - Type: MultiMonitor
+      monitors:
+      - Type: LossMonitor
+        name: BCE
+      - !include f1_markers.yml
+    # Monitor second stage (marker classification)
+    - Type: MultiMonitor
+      monitors:
+      - Type: LossMonitor
+        name: CrossEntropy
+      - !include f1_classes.yml
+  - Type: MetricLogger
+    metrics: 
+    - f1_score_for_bifurcations
+    - Loss
+    - f1_score_for_bifurcationsClasses
+  - !include plot.yml
+Logger:
+- !include visdom.yml
+- !include filelogger.yml
+Predict: !include predict.yml
+Callbacks:
+- Type: ModelCheckpoint
+  monitor: f1_score_for_bifurcationsClasses
+  mode: max
+  save_last: True
+  save_weights_only: True

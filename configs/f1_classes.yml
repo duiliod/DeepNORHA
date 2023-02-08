@@ -1,0 +1,30 @@
+Type: MultiClassMetricMonitor
+name: Classes
+metric: point_f1_pr_re
+pipe:
+- Type: ApplyOne
+  index: 0
+  pipe:
+  - Type: ToCategorical
+    num_classes: 8
+  - Type: npFunction
+    fun: transpose
+    fun_args:
+      axes: [3,0,1,2]
+- Type: ApplyOne
+  index: 1
+  pipe:
+  - Type: npFunction
+    fun: transpose
+    fun_args:
+      axes: [1,0,2,3]
+classes:
+- Background
+- 617bf61256a334b9751774b0
+- 617bf61256a334b9751774b5
+- 617bf61256a334b9751774b1
+- 617bf61256a334b9751774b4
+- 617bf61256a334b9751774b6
+- 619cf927f682fbbfab501c2f
+- 619cf952f682fbbfab501c31
+ignore: Background

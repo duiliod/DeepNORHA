@@ -1,0 +1,38 @@
+DataModule: !include data_both_hippocampi_flippedSVDDDifferenceVolume.yml
+Model:
+  Type: LeNet_ELU_SVDD
+  VolumeDifference: False
+  batch_norm: True
+  activation_unit: ReLU
+  normalization: None
+  activation_function: Sigmoid
+  activate_loss: True
+  filters: [16,32,64]
+  rep_dim: 32
+  fc_out: 512
+  hipo_diff: sub
+  num_input_channels: 1
+  num_output_channels: 1
+Train:
+  epochs: 250
+  scheduler: ReduceLROnPlateau
+  Loss: 
+    Type: dulito_mse   
+  optimizer:
+    Type: Adam
+    lr: 0.0001
+    weight_decay: 0.000001
+  Monitors:
+  - Type: LossMonitor
+  - Type: MetricLogger
+    metric: Loss
+  - !include plot.yml
+Logger:
+- !include visdom.yml
+Predict: !include predict_onestep.yml
+Callbacks:
+- Type: ModelCheckpoint
+  save_last: True
+  save_weights_only: False
+- Type: LearningRateMonitor
+  logging_interval: epoch

@@ -1,0 +1,39 @@
+splits: /home/ddeangeli/deepsvdd/split/ALL_holdout_right.yml
+workers: 8
+batch_size: 1
+Dataset:
+  Type: MultiDataset
+  len: 2122
+  datasets:
+  - pipe:
+    - Type: LoadImage
+  #     subfolder: Imagen
+    - Type: ToTensor
+      type: [float]
+  #     max: 255.0
+  - Type: MultiDataset
+    datasets:
+    - pipe:
+      - Type: LoadImageLabel
+  #       subfolder: fascia_intermuscular
+  #     - Type: Mask
+  # #   - pipe:
+  # #     - Type: LoadImage
+  # #       subfolder: grasa-musculo
+  # #     - Type: Mask
+  # #   - pipe:
+  # #     - Type: LoadImage
+  # #       subfolder: grasa-piel
+  # #     - Type: Mask
+  
+  #   pipe:
+  #   - Type: Stack
+  # pipe:
+  # # - Type: ExtractPatch
+  # #   top_left: [120, 400]
+  # #   patch_shape: [1300, 1100]
+  # #   run_on_test: True
+  # - Type: ToTensor
+  #   type: [float, float]
+ValDataset:
+  len: 241

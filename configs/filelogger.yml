@@ -1,0 +1,2 @@
+Type: FileLogger
+save_dir: lightning_logs

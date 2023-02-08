@@ -1,0 +1,21 @@
+Type: SamplePlot
+pipe:
+- Type: UnPack # x,y,y_hat(pred,forward_out)
+- Type: Pack
+  struct: [0,1] # Discards forward_out
+##### Parse x ####################
+- Type: ApplyOne
+  index: 0
+  pipe:
+  - Type: npFunction
+    fun: squeeze
+  # - Type: ColorMap
+  #   cmap: gray
+# # #### Parse classes ##############
+- Type: ApplyOne
+  index: 1
+  pipe:
+  - Type: npFunction
+    fun: squeeze
+
+

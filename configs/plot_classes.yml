@@ -1,0 +1,52 @@
+Type: SamplePlot
+pipe:
+- Type: UnPack # x,classes,(pred, out_classes) -> x,classes,pred
+- Type: Pack
+  struct: [0,1,2] # x, classes, pred, mask, out_mask
+##### Parse x ####################
+- Type: ApplyOne
+  index: 0
+  pipe:
+  - Type: npFunction
+    fun: squeeze
+  - Type: ColorMap
+    cmap: gray
+##### Parse classes ##############
+- Type: ApplyOne
+  index: 1
+  pipe:
+  - Type: ColorMap
+    cmap: tab10
+    add_zero: True
+##### Parse pred  ################
+- Type: ApplyOne
+  index: 2
+  pipe:
+  - Type: npFunction
+    fun: argmax
+    fun_args: 
+      axis: 0
+  - Type: ColorMap
+    cmap: tab10
+    add_zero: True
+##### Combine ####################
+- Type: Pack
+  struct: [[0,0],[1,2]]
+- Type: ApplyOne # x
+  index: 0
+  pipe:
+  - Type: Stack
+    axis: 0
+- Type: ApplyOne # class
+  index: 1
+  pipe:
+  - Type: Stack
+    axis: 0
+  # - Type: Dilate
+  #   dilation: 3
+- Type: Stack
+  axis: 1
+- Type: npFunction
+  fun: transpose
+  fun_args:
+    axes: [2, 0, 1]

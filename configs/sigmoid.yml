@@ -1,0 +1,61 @@
+Model:
+  Type: LeNet_ELU_Autoencoder
+  patch_size: 256
+  batch_norm: True
+  activation_unit: ReLU
+  normalization: NormalizeWithOwnMeanAndStd
+  activation_function: Sigmoid
+  dropout: 0.0
+  filters: [32,64,128,256,512]
+  num_input_channels: 1
+  num_output_channels: 1
+DataModule:
+  splits: ../acandis/split.yml
+  workers: 8
+  batch_size: 16
+  test_batch: 4
+  Dataset:
+    Type: MultiDataset
+    len: 1600
+    datasets:
+    - pipe:
+      - Type: LoadImage
+        subfolder: img
+      - Type: Normalize
+        max: 255.0 
+    - !include marker_mask.yml
+    pipe:
+      - Type: ExtractPatch
+        patch_shape: [256,256]
+      - Type: ToTensor
+        type: [float, float]
+Train:
+  epochs: 100
+  sampling_strategy: uniform
+  scheduler: ReduceLROnPlateau
+  Loss: 
+    Type: BCEWithLogitsLoss
+    pos_weight: !Tensor [5]
+  optimizer:
+    Type: Adam
+    lr: 0.01
+  Monitors:
+  - Type: LossMonitor
+  - Type: MetricMonitor
+    metric: f1_score_for_bifurcations
+  - Type: MetricMonitor
+    metric: dice
+  - !include plot_mask.yml
+  - Type: LossLogger
+  - Type: MetricLogger
+    metric: f1_score_for_bifurcations
+  - Type: MetricLogger
+    metric: dice
+Logger: !include visdom.yml
+Test: !include test_mask.yml
+Callbacks:
+- Type: ModelCheckpoint
+  monitor: dice
+  mode: max
+  save_last: True
+  save_weights_only: True

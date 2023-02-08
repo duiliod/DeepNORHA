@@ -1,0 +1,27 @@
+Type: MultiClassMetricMonitor
+name: Classes
+metric: MeanSquareError
+pipe:
+- Type: ApplyOne
+  index: 0
+  pipe:
+  - Type: ToCategorical
+    num_classes: 5
+  - Type: npFunction
+    fun: transpose
+    fun_args:
+      axes: [3,0,1,2]
+- Type: ApplyOne
+  index: 1
+  pipe:
+  - Type: npFunction
+    fun: transpose
+    fun_args:
+      axes: [1,0,2,3]
+classes:
+- Background
+- Distal stent marker
+- Pusher
+- No return
+- Catheter markers
+ignore: Background

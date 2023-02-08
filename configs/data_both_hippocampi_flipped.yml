@@ -1,0 +1,20 @@
+splits: /home/ddeangeli/deepsvdd/split/hippocampi_holdout(both).yml
+workers: 8
+batch_size: 32
+Dataset:
+  Type: MultiDataset
+  len: 4234
+  datasets:
+  - pipe:
+    - Type: LoadFlipImage
+
+    - Type: ToTensor
+      type: [float]
+
+  - Type: MultiDataset
+    datasets:
+    - pipe:
+      - Type: LoadImageLabel
+
+ValDataset:
+  len: 1232
