@@ -41,15 +41,7 @@ source activate myenv
 while read requirement; do conda install -n myenv --yes $requirement; done < requirements.txt
 ```
 
-## Running experiments
-
-We currently have implemented the MNIST ([http://yann.lecun.com/exdb/mnist/](http://yann.lecun.com/exdb/mnist/)) and 
-CIFAR-10 ([https://www.cs.toronto.edu/~kriz/cifar.html](https://www.cs.toronto.edu/~kriz/cifar.html)) datasets and 
-simple LeNet-type networks.
-
-Have a look into `main.py` for all possible arguments and options.
-
-### Training example
+## Training example
 ```
 cd <path-to-DeepNORAH-directory>
 # activate virtual environment
@@ -57,7 +49,7 @@ source myenv/bin/activate  # or 'source activate myenv' for conda
 # change to source directory
 cd src/trainer
 # run experiment
-python train_SVDD.py --configAE '/home/ddeangeli/deepsvdd/configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filters.yml' --configSVDD '/home/ddeangeli/deepsvdd/configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filtersSVDD.yml'
+python train_SVDD.py --configAE '../../configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filters.yml' --configSVDD '../../configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filtersSVDD.yml'
 ```
 This example trains a DeepNORAH model where healthy hippocampi is considered to be the normal class. 
 

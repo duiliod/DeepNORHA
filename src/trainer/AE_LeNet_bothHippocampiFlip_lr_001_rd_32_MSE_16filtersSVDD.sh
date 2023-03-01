@@ -8,6 +8,6 @@
 #SBATCH --gres=gpu:1
 #SBATCH --qos=longrunning
 
-python train_SVDD.py --configAE '/home/ddeangeli/deepsvdd/configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filters.yml' --configSVDD '/home/ddeangeli/deepsvdd/configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filtersSVDD.yml'
-python train_SVDD.py --no-pretrained --configAE '/home/ddeangeli/deepsvdd/configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filters.yml' --configSVDD '/home/ddeangeli/deepsvdd/configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filtersSVDD.yml'
+python train_SVDD.py --configAE '../../configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filters.yml' --configSVDD './../configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filtersSVDD.yml'
+python train_SVDD.py --no-pretrained --configAE '../../configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filters.yml' --configSVDD '../../configs/AE_LeNet_bothHippocampiFlip_lr_001_rd_32_MSE_16filtersSVDD.yml'
 
