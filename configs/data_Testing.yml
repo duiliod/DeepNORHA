@@ -1,0 +1,20 @@
+splits: /home/ddeangeli/deepsvdd/split/hippocampi_testing.yml
+workers: 8
+batch_size: 12
+Dataset:
+  Type: MultiDataset
+  len: 4234
+  datasets:
+  - pipe:
+    - Type: LoadFlipImagePairDifferenceVolume
+
+    - Type: ToTensorPairDifferenceVolume
+      type: [float]
+
+  - Type: MultiDataset
+    datasets:
+    - pipe:
+      - Type: LoadImageLabel
+
+ValDataset:
+  len: 139
