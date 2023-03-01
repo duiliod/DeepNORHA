@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# History files
+.Rhistory
+.Rapp.history
+
 # Distribution / packaging
 .Python
 build/
