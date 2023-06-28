@@ -1,5 +1,5 @@
-# # PyTorch Implementation of DeepNORHA
-This repository provides a [PyTorch](https://pytorch.org/) implementation of the *DeepNORHA* method presented in .......
+# # PyTorch Implementation of DeepNORAH
+This repository provides a [PyTorch](https://pytorch.org/) implementation of the *DeepNORAH* method presented in .......
 
 If you would like to get in touch, please contact [ddeangeli@pladema.exa.unicen.edu.ar](ddeangeli@pladema.exa.unicen.edu.ar).
 
